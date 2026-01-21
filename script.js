@@ -54,11 +54,11 @@ class Star {
 
         // Apply parallax: center stars move faster, edge stars slower
         // depth=1: all stars same speed (multiplier = 1 for all)
-        // depth>1: center speeds up, edges slow down
+        // depth>1: center slows down, edges speed up (inverted for desired effect)
         // At depth=1: multiplier = 1 for all stars
-        // At depth=10: center = 1.45, edge = 0.55 (average stays ~1)
+        // At depth=10: center slower, edges faster
         const depthEffect = (config.depth - 1) / 10; // 0 to 0.9 range
-        const parallaxMultiplier = 1 + depthEffect * (0.5 - distFromCenter);
+        const parallaxMultiplier = 1 + depthEffect * (distFromCenter - 0.5);
 
         this.z -= config.speed * parallaxMultiplier;
 
@@ -93,17 +93,10 @@ class Star {
         const g = Math.floor(color.g * brightness);
         const b = Math.floor(color.b * brightness);
 
-        // Draw trail if enabled
-        // trailLength directly multiplies the trail vector length
+        // Draw trail from previous to current position
         if (config.trailLength > 0) {
-            // Calculate trail end point by extending the movement vector
-            const dx = px - sx;
-            const dy = py - sy;
-            const trailX = sx + dx * config.trailLength;
-            const trailY = sy + dy * config.trailLength;
-
             ctx.beginPath();
-            ctx.moveTo(trailX, trailY);
+            ctx.moveTo(px, py);
             ctx.lineTo(sx, sy);
             ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
             ctx.lineWidth = size;
@@ -151,8 +144,12 @@ function updateStarCount(newCount) {
 
 // Animation loop
 function animate() {
-    // Clear canvas fully, trails are drawn from current to previous position
-    ctx.fillStyle = 'rgb(0, 0, 0)';
+    // Clear with trail effect using alpha
+    // Use square root to make the slider more linear-feeling
+    // trailLength 0 = full clear, 2 = very persistent
+    const normalizedTrail = config.trailLength / 2; // 0 to 1 range
+    const clearAlpha = 1 - Math.sqrt(normalizedTrail) * 0.95;
+    ctx.fillStyle = `rgba(0, 0, 0, ${clearAlpha})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Update and draw stars
