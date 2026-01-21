@@ -44,6 +44,7 @@ class Star {
         this.y = randomNormal(0, canvas.height / 6);
         this.z = Math.random() * canvas.width;
         this.pz = this.z;
+        this.justReset = true;
     }
 
     update() {
@@ -54,18 +55,18 @@ class Star {
 
         // Apply parallax: center stars move faster, edge stars slower
         // depth=1: all stars same speed (multiplier = 1 for all)
-        // depth>1: center slows down, edges speed up (inverted for desired effect)
-        // At depth=1: multiplier = 1 for all stars
-        // At depth=10: center slower, edges faster
-        const depthEffect = (config.depth - 1) / 10; // 0 to 0.9 range
-        const parallaxMultiplier = 1 + depthEffect * (distFromCenter - 0.5);
+        // depth>1: center faster, edges slower
+        // Stronger effect: at depth=10, center is 2x speed, edges are 0.5x
+        const depthEffect = (config.depth - 1) / 9; // 0 to 1 range
+        const parallaxMultiplier = 1 + depthEffect * (0.5 - distFromCenter) * 1.5;
 
         this.z -= config.speed * parallaxMultiplier;
 
         if (this.z < 1) {
             this.reset();
             this.z = canvas.width;
-            this.pz = this.z;
+            this.pz = this.z; // Set pz to same as z to prevent trail glitch on reset
+            this.justReset = true;
         }
     }
 
@@ -93,8 +94,8 @@ class Star {
         const g = Math.floor(color.g * brightness);
         const b = Math.floor(color.b * brightness);
 
-        // Draw trail from previous to current position
-        if (config.trailLength > 0) {
+        // Draw trail from previous to current position (skip if just reset to avoid glitch)
+        if (config.trailLength > 0 && !this.justReset) {
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(sx, sy);
@@ -103,6 +104,7 @@ class Star {
             ctx.lineCap = 'round';
             ctx.stroke();
         }
+        this.justReset = false;
 
         // Draw star
         ctx.beginPath();
