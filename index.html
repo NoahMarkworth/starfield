@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starfield Effect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+
+    <div class="controls" id="controls">
+        <button class="toggle-btn" id="toggleControls">☰</button>
+
+        <div class="controls-panel" id="controlsPanel">
+            <h2>Starfield Controls</h2>
+
+            <div class="control-group">
+                <label for="starCount">Star Count: <span id="starCountValue">300</span></label>
+                <input type="range" id="starCount" min="50" max="1000" value="300">
+            </div>
+
+            <div class="control-group">
+                <label for="speed">Speed: <span id="speedValue">5</span></label>
+                <input type="range" id="speed" min="1" max="20" value="5">
+            </div>
+
+            <div class="control-group">
+                <label for="starSize">Star Size: <span id="starSizeValue">2</span></label>
+                <input type="range" id="starSize" min="1" max="5" value="2" step="0.5">
+            </div>
+
+            <div class="control-group">
+                <label for="trailLength">Trail Length: <span id="trailLengthValue">0.5</span></label>
+                <input type="range" id="trailLength" min="0" max="1" value="0.5" step="0.1">
+            </div>
+
+            <div class="control-group">
+                <label for="depth">Depth: <span id="depthValue">5</span></label>
+                <input type="range" id="depth" min="1" max="10" value="5">
+            </div>
+
+            <div class="control-group">
+                <label for="starColor">Star Color:</label>
+                <input type="color" id="starColor" value="#ffffff">
+            </div>
+
+            <div class="button-group">
+                <button id="pauseBtn">Pause</button>
+                <button id="resetBtn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
