@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 
 // Configuration with defaults
 const config = {
-    starCount: 300,
+    starCount: 500,
     speed: 5,
     starSize: 2,
     trailLength: 0.5,
@@ -23,6 +23,14 @@ function resizeCanvas() {
     canvas.height = window.innerHeight;
 }
 
+// Box-Muller transform for normal distribution
+function randomNormal(mean = 0, stdDev = 1) {
+    const u1 = Math.random();
+    const u2 = Math.random();
+    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    return z * stdDev + mean;
+}
+
 // Star class
 class Star {
     constructor() {
@@ -30,8 +38,10 @@ class Star {
     }
 
     reset() {
-        this.x = Math.random() * canvas.width - canvas.width / 2;
-        this.y = Math.random() * canvas.height - canvas.height / 2;
+        // Normal distribution centered at screen center
+        // stdDev controls spread - using 1/3 of half-width so ~99% of stars are on screen
+        this.x = randomNormal(0, canvas.width / 6);
+        this.y = randomNormal(0, canvas.height / 6);
         this.z = Math.random() * canvas.width;
         this.pz = this.z;
     }
@@ -225,7 +235,7 @@ const resetBtn = document.getElementById('resetBtn');
 
 resetBtn.addEventListener('click', () => {
     // Reset config
-    config.starCount = 300;
+    config.starCount = 500;
     config.speed = 5;
     config.starSize = 2;
     config.trailLength = 0.5;
@@ -233,7 +243,7 @@ resetBtn.addEventListener('click', () => {
     config.starColor = '#ffffff';
 
     // Reset sliders
-    sliders.starCount.value = 300;
+    sliders.starCount.value = 500;
     sliders.speed.value = 5;
     sliders.starSize.value = 2;
     sliders.trailLength.value = 0.5;
@@ -241,7 +251,7 @@ resetBtn.addEventListener('click', () => {
     sliders.starColor.value = '#ffffff';
 
     // Reset value displays
-    valueDisplays.starCount.textContent = '300';
+    valueDisplays.starCount.textContent = '500';
     valueDisplays.speed.textContent = '5';
     valueDisplays.starSize.textContent = '2';
     valueDisplays.trailLength.textContent = '0.5';
