@@ -77,7 +77,7 @@ class Star {
         const sx = (this.x / this.z) * canvas.width + centerX;
         const sy = (this.y / this.z) * canvas.height + centerY;
 
-        // Previous position for trail
+        // Previous position for trail base
         const px = (this.x / this.pz) * canvas.width + centerX;
         const py = (this.y / this.pz) * canvas.height + centerY;
 
@@ -94,9 +94,16 @@ class Star {
         const b = Math.floor(color.b * brightness);
 
         // Draw trail if enabled
+        // trailLength directly multiplies the trail vector length
         if (config.trailLength > 0) {
+            // Calculate trail end point by extending the movement vector
+            const dx = px - sx;
+            const dy = py - sy;
+            const trailX = sx + dx * config.trailLength;
+            const trailY = sy + dy * config.trailLength;
+
             ctx.beginPath();
-            ctx.moveTo(px, py);
+            ctx.moveTo(trailX, trailY);
             ctx.lineTo(sx, sy);
             ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
             ctx.lineWidth = size;
@@ -144,10 +151,8 @@ function updateStarCount(newCount) {
 
 // Animation loop
 function animate() {
-    // Clear with trail effect
-    // trailLength 0 = full clear (no trails), higher = more persistent trails
-    const clearAlpha = Math.max(0.01, 1 - config.trailLength * 0.5);
-    ctx.fillStyle = `rgba(0, 0, 0, ${clearAlpha})`;
+    // Clear canvas fully, trails are drawn from current to previous position
+    ctx.fillStyle = 'rgb(0, 0, 0)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Update and draw stars
