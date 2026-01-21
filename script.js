@@ -49,13 +49,16 @@ class Star {
     update() {
         this.pz = this.z;
 
-        // Calculate distance from center (0-1 range)
-        const distFromCenter = Math.sqrt(this.x * this.x + this.y * this.y) / (canvas.width / 2);
+        // Calculate distance from center (0-1 range, clamped)
+        const distFromCenter = Math.min(1, Math.sqrt(this.x * this.x + this.y * this.y) / (canvas.width / 2));
 
         // Apply parallax: center stars move faster, edge stars slower
-        // depth=1: all stars same speed
-        // depth>1: center speeds up, edges slow down relative to center
-        const parallaxMultiplier = (1 + distFromCenter * config.depth) / config.depth;
+        // depth=1: all stars same speed (multiplier = 1 for all)
+        // depth>1: center gets multiplier of depth, edges get multiplier of 1
+        // Formula: depth - (depth - 1) * distFromCenter
+        // At center (dist=0): multiplier = depth
+        // At edge (dist=1): multiplier = 1
+        const parallaxMultiplier = config.depth - (config.depth - 1) * distFromCenter;
 
         this.z -= config.speed * parallaxMultiplier;
 
@@ -142,7 +145,9 @@ function updateStarCount(newCount) {
 // Animation loop
 function animate() {
     // Clear with trail effect
-    ctx.fillStyle = `rgba(0, 0, 0, ${1 - config.trailLength * 0.5})`;
+    // trailLength 0 = full clear (no trails), higher = more persistent trails
+    const clearAlpha = Math.max(0.01, 1 - config.trailLength * 0.5);
+    ctx.fillStyle = `rgba(0, 0, 0, ${clearAlpha})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Update and draw stars
