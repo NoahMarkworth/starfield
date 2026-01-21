@@ -54,11 +54,11 @@ class Star {
 
         // Apply parallax: center stars move faster, edge stars slower
         // depth=1: all stars same speed (multiplier = 1 for all)
-        // depth>1: center gets multiplier of depth, edges get multiplier of 1
-        // Formula: depth - (depth - 1) * distFromCenter
-        // At center (dist=0): multiplier = depth
-        // At edge (dist=1): multiplier = 1
-        const parallaxMultiplier = config.depth - (config.depth - 1) * distFromCenter;
+        // depth>1: center speeds up, edges slow down
+        // At depth=1: multiplier = 1 for all stars
+        // At depth=10: center = 1.45, edge = 0.55 (average stays ~1)
+        const depthEffect = (config.depth - 1) / 10; // 0 to 0.9 range
+        const parallaxMultiplier = 1 + depthEffect * (0.5 - distFromCenter);
 
         this.z -= config.speed * parallaxMultiplier;
 
