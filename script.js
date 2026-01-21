@@ -38,7 +38,15 @@ class Star {
 
     update() {
         this.pz = this.z;
-        this.z -= config.speed * config.depth;
+
+        // Calculate distance from center (0-1 range)
+        const distFromCenter = Math.sqrt(this.x * this.x + this.y * this.y) / (canvas.width / 2);
+
+        // Apply parallax: stars further from center move faster
+        // depth controls how much the edge stars speed up compared to center
+        const parallaxMultiplier = 1 + (distFromCenter * (config.depth - 1));
+
+        this.z -= config.speed * parallaxMultiplier;
 
         if (this.z < 1) {
             this.reset();
