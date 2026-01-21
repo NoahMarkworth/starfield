@@ -76,8 +76,9 @@ class Star {
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(sx, sy);
-            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${config.trailLength * brightness})`;
-            ctx.lineWidth = size / 2;
+            ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
+            ctx.lineWidth = size;
+            ctx.lineCap = 'round';
             ctx.stroke();
         }
 
