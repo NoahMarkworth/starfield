@@ -5,8 +5,8 @@ const ctx = canvas.getContext('2d');
 // Configuration with defaults
 const config = {
     starCount: 500,
-    speed: 5,
-    starSize: 2,
+    speed: 20,
+    starSize: 1,
     trailLength: 0.5,
     depth: 5,
     starColor: '#ffffff'
@@ -52,9 +52,10 @@ class Star {
         // Calculate distance from center (0-1 range)
         const distFromCenter = Math.sqrt(this.x * this.x + this.y * this.y) / (canvas.width / 2);
 
-        // Apply parallax: stars further from center move faster
-        // depth controls how much the edge stars speed up compared to center
-        const parallaxMultiplier = 1 + (distFromCenter * (config.depth - 1));
+        // Apply parallax: center stars move faster, edge stars slower
+        // depth=1: all stars same speed
+        // depth>1: center speeds up, edges slow down relative to center
+        const parallaxMultiplier = (1 + distFromCenter * config.depth) / config.depth;
 
         this.z -= config.speed * parallaxMultiplier;
 
@@ -236,24 +237,24 @@ const resetBtn = document.getElementById('resetBtn');
 resetBtn.addEventListener('click', () => {
     // Reset config
     config.starCount = 500;
-    config.speed = 5;
-    config.starSize = 2;
+    config.speed = 20;
+    config.starSize = 1;
     config.trailLength = 0.5;
     config.depth = 5;
     config.starColor = '#ffffff';
 
     // Reset sliders
     sliders.starCount.value = 500;
-    sliders.speed.value = 5;
-    sliders.starSize.value = 2;
+    sliders.speed.value = 20;
+    sliders.starSize.value = 1;
     sliders.trailLength.value = 0.5;
     sliders.depth.value = 5;
     sliders.starColor.value = '#ffffff';
 
     // Reset value displays
     valueDisplays.starCount.textContent = '500';
-    valueDisplays.speed.textContent = '5';
-    valueDisplays.starSize.textContent = '2';
+    valueDisplays.speed.textContent = '20';
+    valueDisplays.starSize.textContent = '1';
     valueDisplays.trailLength.textContent = '0.5';
     valueDisplays.depth.textContent = '5';
 
